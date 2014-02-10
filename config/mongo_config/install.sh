@@ -15,8 +15,15 @@ echo "$CLIENT_IP_ADDR    $CLIENT_FQDN $CLIENT_NAME" >> /etc/hosts
 echo "Downloading some packages ..."
 yum install systat openssl  -y
 
-# get mongodb
-wget http://fastdl.mongodb.org/linux/mongodb-linux-x86_64-2.4.8.tgz
-tar zxvf mongodb-linux-x86_64-2.4.8.tgz
+echo "config and enable port for mongo services"
 
+# echo "get & install mongodb"
+# wget http://fastdl.mongodb.org/linux/mongodb-linux-x86_64-2.4.8.tgz
+# tar zxvf mongodb-linux-x86_64-2.4.8.tgz
 
+echo "get mongod latest nightly"
+wget http://fastdl.mongodb.org/linux/mongodb-linux-x86_64-latest.tgz
+tar zxvf mongodb-linux-x86_64-latest.tgz
+
+echo "create mongod.conf"
+echo "# auto generated mongod config " > /home/vagrant/mongod.conf
