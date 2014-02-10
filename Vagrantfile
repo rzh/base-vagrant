@@ -7,46 +7,50 @@ source /vagrant/config/mongo_config/config.sh | tee -a /var/log/vagrant-setup.lo
 sh /vagrant/config/mongo_config/install.sh    | tee -a /var/log/vagrant-setup.log;
 EOF
 
+$CLIENT_SCRIPT = <<EOF
+touch /var/log/vagrant-setup.log; \
+source /vagrant/config/client_config/config.sh | tee -a /var/log/vagrant-setup.log;\
+sh /vagrant/config/client_config/install.sh    | tee -a /var/log/vagrant-setup.log;
+EOF
+
+
+# SSL Mongod
+$MONGOD_SSL_SCRIPT = <<EOF
+touch /var/log/vagrant-setup.log; \
+source /vagrant/config/mongo_config/config.sh | tee -a /var/log/vagrant-setup.log;\
+sh /vagrant/config/mongo_config/install.sh    | tee -a /var/log/vagrant-setup.log;\
+sh /vagrant/config/ssl/install_ssl.sh    | tee -a /var/log/vagrant-setup.log;
+EOF
+
 
 Vagrant.configure("2") do |config|
-  # default Vbox imageß
-  config.vm.box = "Fedora-18-VBox"
-  config.vm.box_url = "http://puppet-vagrant-boxes.puppetlabs.com/fedora-18-x64-vbox4210.box"
-  
+
   config.vm.define :mongod do |mongod|
     # pick my own version here
     mongod.vm.box = "CentoOS 6.4"
     mongod.vm.box_url = "http://puppet-vagrant-boxes.puppetlabs.com/centos-64-x64-vbox4210-nocm.box"
 
     mongod.vm.provider "virtualbox" do |v|
-       # v.gui = true
-       v.memory = 1024
-       # v.customize ["modifyvm", :id, "--cpus", "2"]
-       # v.customize ["modifyvm", :id, "--cpuexecutioncap", "50"]
+       v.customize ["modifyvm", :id, "--cpus", "2"]
     end
 
-    # mongod.vm.network :forwarded_port, guest: 80, host: 28888
-    # mongod.vm.network :forwarded_port, guest: 443, host: 4443
-    mongod.vm.network :private_network, ip: "192.168.19.152"
+    mongod.vm.network :private_network, ip: "192.168.19.100"
     mongod.vm.hostname = "mongod.example.com"
-    mongod.vm.provision :shell, :inline => $MONGO_SCRIPT
+    mongod.vm.provision :shell, :inline => $MONGOD_SSL_SCRIPT
   end
 
-  config.vm.define :win1 do |win|
-    # a sample windows vbox
-    win.vm.box = "windows2008R2"
-    win.vm.guest = :windows
+  config.vm.define :client do |host|
+    # pick my own version here
+    host.vm.box = "CentoOS 6.4"
+    host.vm.box_url = "http://puppet-vagrant-boxes.puppetlabs.com/centos-64-x64-vbox4210-nocm.box"
 
-    win.vm.provider "virtualbox" do |v|
-        v.gui = true
+    host.vm.provider "virtualbox" do |v|
+       v.customize ["modifyvm", :id, "--cpus", "2"]
     end
 
-    win.vm.network :private_network, ip: "192.168.19.60"
-    win.vm.hostname = "win1.example.com"
-
-    # Port forward WinRM and RDP
-    win.vm.network :forwarded_port, guest: 3389, host: 3389
-    win.vm.network :forwarded_port, guest: 5985, host: 5985, id: "winrm", auto_correct: true
+    host.vm.network :private_network, ip: "192.168.19.200"
+    host.vm.hostname = "client.example.com"
+    host.vm.provision :shell, :inline => $CLIENT_SCRIPT
   end
 
 end
