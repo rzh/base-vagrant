@@ -1,0 +1,34 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+$MONGO_SCRIPT = <<EOF
+touch /var/log/vagrant-setup.log; \
+source /vagrant/config/mongo_config/config.sh | tee -a /var/log/vagrant-setup.log;\
+sh /vagrant/config/mongo_config/install.sh    | tee -a /var/log/vagrant-setup.log;
+EOF
+
+# SSL Mongod
+$MONGOD_SSL_SCRIPT = <<EOF
+touch /var/log/vagrant-setup.log; \
+source /vagrant/config/mongo_config/config.sh | tee -a /var/log/vagrant-setup.log;\
+sh /vagrant/config/mongo_config/install.sh    | tee -a /var/log/vagrant-setup.log;\
+sh /vagrant/config/ssl/install_ssl.sh    | tee -a /var/log/vagrant-setup.log;
+EOF
+
+
+Vagrant.configure("2") do |config|
+
+  config.vm.define :mongod do |mongod|
+    # pick my own version here
+    mongod.vm.box = "CentoOS 6.4"
+    mongod.vm.box_url = "http://puppet-vagrant-boxes.puppetlabs.com/centos-64-x64-vbox4210-nocm.box"
+
+    mongod.vm.provider "virtualbox" do |v|
+       v.customize ["modifyvm", :id, "--cpus", "2"]
+    end
+
+    mongod.vm.network :private_network, ip: "192.168.19.100"
+    mongod.vm.hostname = "mongod.example.com"
+    mongod.vm.provision :shell, :inline => $MONGOD_SSL_SCRIPT
+  end
+end

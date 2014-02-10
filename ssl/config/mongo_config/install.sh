@@ -1,0 +1,1 @@
+../../../config/mongo_config/install.sh
