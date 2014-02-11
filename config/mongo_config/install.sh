@@ -25,10 +25,13 @@ echo "get mongod latest nightly"
 wget http://fastdl.mongodb.org/linux/mongodb-linux-x86_64-latest.tgz
 tar zxvf mongodb-linux-x86_64-latest.tgz
 
+echo "get mongod enterprise latest nightly"
+wget http://downloads.10gen.com/linux/mongodb-linux-x86_64-enterprise-rhel62-2.5.5.tgz
+tar zxvf mongodb-linux-x86_64-enterprise-rhel62-2.5.5.tgz
+
 echo "create mongod.conf"
 echo "# auto generated mongod config " > /home/vagrant/mongod.conf
 echo "dbpath=/home/vagrant/dbs" >> /home/vagrant/mongod.conf
 
 echo "create database folder"
 mkdir /home/vagrant/dbs
-
