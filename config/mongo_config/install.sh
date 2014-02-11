@@ -13,7 +13,7 @@ echo "::1 	localhost localhost.localdomain localhost6 localhost6.localdomain6" >
 echo "$CLIENT_IP_ADDR    $CLIENT_FQDN $CLIENT_NAME" >> /etc/hosts
 
 echo "Downloading some packages ..."
-yum install systat openssl  -y
+# yum install systat openssl  -y
 
 echo "config and enable port for mongo services"
 
@@ -35,3 +35,6 @@ echo "dbpath=/home/vagrant/dbs" >> /home/vagrant/mongod.conf
 
 echo "create database folder"
 mkdir /home/vagrant/dbs
+chmod 777 /home/vagrant/dbs
+rm /home/vagrant/*.tgz
+chown -R vagrant:vagrant /home/vagrant/*
