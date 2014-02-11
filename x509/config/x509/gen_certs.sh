@@ -37,15 +37,15 @@ openssl req -new -nodes -x509 -days 365 -out $BASEDIR/cacert.pem -keyout $BASEDI
 echo "Creating server certificate"
 openssl req -newkey rsa:1024 -nodes -sha1 -keyout $BASEDIR/testServer.key -keyform PEM -out $BASEDIR/testServer.req -outform PEM -subj "$SUBJ_SERVER" -config /vagrant/config/x509/openssl.cnf
 yes | openssl ca -in $BASEDIR/testServer.req -out $BASEDIR/testServer.crt -config /vagrant/config/x509/openssl.cnf
-cat $BASEDIR/testServer.crt $BASEDIR/testServer.key > $BASEDIR/libs/server_338.pem
+cat $BASEDIR/testServer.crt $BASEDIR/testServer.key > $BASEDIR/libs/server.pem
 
 echo "Creating client certificate"
 openssl req -newkey rsa:1024 -nodes -sha1 -keyout $BASEDIR/testClient.key -keyform PEM -out $BASEDIR/testClient.req -outform PEM -subj "$SUBJ_CLIENT"  -config /vagrant/config/x509/openssl.cnf
 yes | openssl ca -in $BASEDIR/testClient.req -out $BASEDIR/testClient.crt -config /vagrant/config/x509/openssl.cnf
-cat $BASEDIR/testClient.crt $BASEDIR/testClient.key > $BASEDIR/libs/client_338.pem
+cat $BASEDIR/testClient.crt $BASEDIR/testClient.key > $BASEDIR/libs/client.pem
 
 echo "copying CA key file"
-cp $BASEDIR/cacert.pem $BASEDIR/libs/ca_338.pem
+cp $BASEDIR/cacert.pem $BASEDIR/libs/ca.pem
 
 # Cleanup
 #rm -f $BASEDIR/*.key 
@@ -55,12 +55,12 @@ cp $BASEDIR/cacert.pem $BASEDIR/libs/ca_338.pem
 # Print out certificate subjects
 echo "Your subjects, O king --"
 echo "** SERVER"
-sudo openssl x509 -in $BASEDIR/libs/server_338.pem -inform PEM -subject -nameopt RFC2253
+sudo openssl x509 -in $BASEDIR/libs/server.pem -inform PEM -subject -nameopt RFC2253
 echo "** CLIENT"
-sudo openssl x509 -in $BASEDIR/libs/client_338.pem -inform PEM -subject -nameopt RFC2253
+sudo openssl x509 -in $BASEDIR/libs/client.pem -inform PEM -subject -nameopt RFC2253
 
 # Show what we did
 echo "Created three valid certificates":
-echo "        ca_338.pem              CA certificate"
-echo "        server_338.pem          Server certificate"
-echo "        client_338.pem          Client certificate"
+echo "        ca.pem              CA certificate"
+echo "        server.pem          Server certificate"
+echo "        client.pem          Client certificate"
