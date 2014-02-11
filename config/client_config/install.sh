@@ -34,7 +34,7 @@ python get-pip.py
 rm get-pip.py
 
 yum install gcc python-devel -y
-pip instll pymongo
+pip install pymongo
 pip install kerberos
 
 echo "install kerberos related package"
