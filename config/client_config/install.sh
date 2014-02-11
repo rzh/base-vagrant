@@ -13,7 +13,6 @@ echo "::1 	localhost localhost.localdomain localhost6 localhost6.localdomain6" >
 echo "$CLIENT_IP_ADDR    $CLIENT_FQDN $CLIENT_NAME" >> /etc/hosts
 
 echo "Downloading some packages ..."
-yum install systat  -y
 
 echo "config and enable port for mongo services"
 
@@ -39,5 +38,3 @@ pip install kerberos
 
 echo "install kerberos related package"
 yum install krb5-workstation -y
-
-
