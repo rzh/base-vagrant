@@ -17,17 +17,21 @@ echo "Downloading some packages ..."
 
 echo "config and enable port for mongo services"
 
-# echo "get & install mongodb"
-# wget http://fastdl.mongodb.org/linux/mongodb-linux-x86_64-2.4.8.tgz
-# tar zxvf mongodb-linux-x86_64-2.4.8.tgz
+if [ -f /etc/redhat-release ]; then
+	sudo yum install openssl net-snmp net-snmp-libs net-snmp-utils cyrus-sasl cyrus-sasl-lib cyrus-sasl-devel cyrus-sasl-gssapi cyrus-sasl-md5 -y
+
+	echo "get mongod enterprise latest nightly"
+	wget http://downloads.10gen.com/linux/mongodb-linux-x86_64-enterprise-rhel62-2.5.5.tgz
+	tar zxvf mongodb-linux-x86_64-enterprise-rhel62-2.5.5.tgz
+fi
+
+# stop firewall
+service iptables stop
+chkconfig iptables off
 
 echo "get mongod latest nightly"
 wget http://fastdl.mongodb.org/linux/mongodb-linux-x86_64-latest.tgz
 tar zxvf mongodb-linux-x86_64-latest.tgz
-
-echo "get mongod enterprise latest nightly"
-wget http://downloads.10gen.com/linux/mongodb-linux-x86_64-enterprise-rhel62-2.5.5.tgz
-tar zxvf mongodb-linux-x86_64-enterprise-rhel62-2.5.5.tgz
 
 echo "create mongod.conf"
 echo "# auto generated mongod config " > /home/vagrant/mongod.conf
