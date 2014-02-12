@@ -1,1 +1,0 @@
-../../../config/mongo_config/config.sh
