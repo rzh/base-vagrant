@@ -35,11 +35,11 @@ echo "# setParameter = authenticationMechanisms=CRAM-MD5"  >> /home/vagrant/mong
 echo "# sslOnNormalPorts = true"  >> /home/vagrant/mongod.conf
 echo "# sslPEMKeyFile = /vagrant/mongodb.pem"  >> /home/vagrant/mongod.conf
 
-echo "export KRB5_KTNAME=\"/vagrant/shared/mongod_rhel64.keytab\"" >> /home/vagrant/.bash_profile
+echo "export KRB5_KTNAME=\"/vagrant/shared/mongod_$HOST_NAME.keytab\"" >> /home/vagrant/.bash_profile
 
 echo "get mongo enterprise"
 if [ -f /etc/redhat-release ]; then
-	if grep -q "6.4" /etc/redhat-release
+	if grep -q "release 6.. (Final)" /etc/redhat-release
 	then
 	    # this is 6.4 release
 		echo "get mongod enterprise latest nightly"
@@ -47,6 +47,12 @@ if [ -f /etc/redhat-release ]; then
 		tar zxvf mongodb-linux-x86_64-enterprise-rhel62-latest.tgz
 		rm mongodb-linux-x86_64-enterprise-rhel62-latest.tgz
 		mv mongodb-linux-x86_64-enterprise-rhel62-* mongodb
+	elif grep -q "release 5.. (Final)" /etc/redhat-release
+		# redhat 5.x release
+		wget http://downloads.mongodb.com/linux/mongodb-linux-x86_64-enterprise-rhel57-latest.tgz
+		tar zxvf mongodb-linux-x86_64-enterprise-rhel57-latest.tgz
+		rm mongodb-linux-x86_64-enterprise-rhel57-latest.tgz
+		mv mongodb-linux-x86_64-enterprise-rhel57-* mongodb
 	fi
 fi
 
