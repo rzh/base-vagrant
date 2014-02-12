@@ -21,21 +21,10 @@ if [ -f /etc/redhat-release ]; then
 	sudo yum install openssl net-snmp net-snmp-libs net-snmp-utils cyrus-sasl cyrus-sasl-lib cyrus-sasl-devel cyrus-sasl-gssapi cyrus-sasl-md5 -y
 fi
 
-
 echo "update krb5.conf"
 sed -i 's/EXAMPLE/MONGOTEST/g' /etc/krb5.conf
 sed -i 's/example/mongotest/g' /etc/krb5.conf
 sed -i 's/kerberos.mongotest.com/kdc.mongotest.com/g' /etc/krb5.conf
-
-echo "dbpath=/home/vagrant/dbs" >> /home/vagrant/mongod.conf
-echo "auth = true"  >> /home/vagrant/mongod.conf
-echo "setParameter = authenticationMechanisms=GSSAPI"  >> /home/vagrant/mongod.conf
-echo "# setParameter = authenticationMechanisms=MONGODB-CR"  >> /home/vagrant/mongod.conf
-echo "# setParameter = authenticationMechanisms=CRAM-MD5"  >> /home/vagrant/mongod.conf
-echo "# sslOnNormalPorts = true"  >> /home/vagrant/mongod.conf
-echo "# sslPEMKeyFile = /vagrant/mongodb.pem"  >> /home/vagrant/mongod.conf
-
-echo "export KRB5_KTNAME=\"/vagrant/shared/mongod_rhel64.keytab\"" >> /home/vagrant/.bash_profile
 
 echo "get mongo enterprise"
 if [ -f /etc/redhat-release ]; then
@@ -49,19 +38,4 @@ if [ -f /etc/redhat-release ]; then
 		mv mongodb-linux-x86_64-enterprise-rhel62-* mongodb
 	fi
 fi
-
-echo "restore dbs"
-cp -r /vagrant/shared/dump /home/vagrant
-echo "create database folder"
-mkdir /home/vagrant/dbs
-chmod 777 /home/vagrant/dbs
-
-/home/vagrant/mongodb/bin/mongorestore --dbpath /home/vagrant/dbs
-
-echo "cleanup...."
-if [ -f /home/vagrant/*.tgz ]; then
-	rm /home/vagrant/*.tgz
-fi
-
-chown -R vagrant:vagrant /home/vagrant/*
 

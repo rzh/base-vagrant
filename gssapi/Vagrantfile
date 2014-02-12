@@ -4,16 +4,22 @@
 # Kerberos KDC
 $KDC_SCRIPT = <<EOF
 touch /var/log/vagrant-setup.log; \
-source /vagrant/config/mongo_config/config.sh | tee -a /var/log/vagrant-setup.log;\
+source /vagrant/config/kerberos/config.sh | tee -a /var/log/vagrant-setup.log;\
 bash /vagrant/config/kerberos/install_kdc.sh         | tee -a /var/log/vagrant-setup.log;
 EOF
 
 # Mongod
 $MONGOD_SCRIPT = <<EOF
 touch /var/log/vagrant-setup.log; \
-source /vagrant/config/mongo_config/config.sh | tee -a /var/log/vagrant-setup.log;\
-bash /vagrant/config/mongo_config/install.sh  | tee -a /var/log/vagrant-setup.log;\
+source /vagrant/config/kerberos/config.sh | tee -a /var/log/vagrant-setup.log;\
 bash /vagrant/config/kerberos/install_mongod.sh  | tee -a /var/log/vagrant-setup.log;
+EOF
+
+# Test Client
+$CLIENT_SCRIPT = <<EOF
+touch /var/log/vagrant-setup.log; \
+source /vagrant/config/kerberos/config.sh | tee -a /var/log/vagrant-setup.log;\
+bash /vagrant/config/kerberos/install_client.sh  | tee -a /var/log/vagrant-setup.log;
 EOF
 
 
@@ -32,7 +38,7 @@ Vagrant.configure("2") do |config|
     mongod.vm.provision :shell, :inline => $KDC_SCRIPT
   end
 
-  config.vm.define :mongod_rh64 do |mongod|
+  config.vm.define :rhel64 do |mongod|
     # pick my own version here
     mongod.vm.box = "CentoOS 6.4"
     mongod.vm.box_url = "http://puppet-vagrant-boxes.puppetlabs.com/centos-64-x64-vbox4210-nocm.box"
@@ -45,4 +51,19 @@ Vagrant.configure("2") do |config|
     mongod.vm.hostname = "rhel64.mongotest.com"
     mongod.vm.provision :shell, :inline => $MONGOD_SCRIPT
   end  
+
+  config.vm.define :client do |mongod|
+    # pick my own version here
+    mongod.vm.box = "CentoOS 6.4"
+    mongod.vm.box_url = "http://puppet-vagrant-boxes.puppetlabs.com/centos-64-x64-vbox4210-nocm.box"
+
+    mongod.vm.provider "virtualbox" do |v|
+       v.customize ["modifyvm", :id, "--cpus", "2"]
+    end
+
+    mongod.vm.network :private_network, ip: "192.168.19.150"
+    mongod.vm.hostname = "client.mongotest.com"
+    mongod.vm.provision :shell, :inline => $CLIENT_SCRIPT
+  end  
+
 end

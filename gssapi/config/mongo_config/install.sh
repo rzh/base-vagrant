@@ -8,7 +8,7 @@ export DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 source $DIR/config.sh
 
 echo "Configuring /etc/hosts ..."
-echo "127.0.0.1 localhost localhost.localdomain localhost4 localhost4.localdomain4" > /etc/hosts
+echo "127.0.0.1 localhost localhost.localdomain localhost4 localhost4.localdomain4" >> /etc/hosts
 echo "::1 	localhost localhost.localdomain localhost6 localhost6.localdomain6" >> /etc/hosts
 echo "$CLIENT_IP_ADDR    $CLIENT_FQDN $CLIENT_NAME" >> /etc/hosts
 
@@ -19,26 +19,21 @@ echo "config and enable port for mongo services"
 
 if [ -f /etc/redhat-release ]; then
 	sudo yum install openssl net-snmp net-snmp-libs net-snmp-utils cyrus-sasl cyrus-sasl-lib cyrus-sasl-devel cyrus-sasl-gssapi cyrus-sasl-md5 -y
-
-	echo "get mongod enterprise latest nightly"
-	wget http://downloads.10gen.com/linux/mongodb-linux-x86_64-enterprise-rhel62-2.5.5.tgz
-	tar zxvf mongodb-linux-x86_64-enterprise-rhel62-2.5.5.tgz
 fi
 
 # stop firewall
 service iptables stop
 chkconfig iptables off
 
-echo "get mongod latest nightly"
-wget http://fastdl.mongodb.org/linux/mongodb-linux-x86_64-latest.tgz
-tar zxvf mongodb-linux-x86_64-latest.tgz
-
 echo "create mongod.conf"
-echo "# auto generated mongod config " > /home/vagrant/mongod.conf
+# echo "# auto generated mongod config " > /home/vagrant/mongod.conf
 echo "dbpath=/home/vagrant/dbs" >> /home/vagrant/mongod.conf
 
 echo "create database folder"
 mkdir /home/vagrant/dbs
 chmod 777 /home/vagrant/dbs
-rm /home/vagrant/*.tgz
+if [ -f /home/vagrant/*.tgz ]; then
+	rm /home/vagrant/*.tgz
+fi
+
 chown -R vagrant:vagrant /home/vagrant/*

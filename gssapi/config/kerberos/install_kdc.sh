@@ -50,4 +50,23 @@ aaaAAA111
 aaaAAA111
 !
 
+kadmin.local -q "addprinc gssapitest" <<!
+aaaAAA111
+aaaAAA111
+!
 
+kadmin.local -q "addprinc gssapitest1" <<!
+aaaAAA111
+aaaAAA111
+!
+
+echo "create principle for mongod_rh64 mongodb"
+kadmin.local -q "addprinc mongodb/rhel64.mongotest.com" <<!
+aaaAAA111
+aaaAAA111
+!
+
+echo "create keytab for mongod rhel64"
+kadmin.local -q "ktadd -k mongod_rhel64.keytab mongodb/rhel64.mongotest.com"
+mv mongod_rhel64.keytab  /vagrant/shared
+chown vagrant:vagrant /vagrant/shared/mongod_rhel64.keytab
