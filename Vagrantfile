@@ -19,7 +19,7 @@ EOF
 
 Vagrant.configure("2") do |config|
 
-  config.vm.define :rhel64 do |mongod|
+  config.vm.define :mongod do |mongod|
     # pick my own version here
     mongod.vm.box = "CentoOS 6.4"
     mongod.vm.box_url = "http://puppet-vagrant-boxes.puppetlabs.com/centos-64-x64-vbox4210-nocm.box"
