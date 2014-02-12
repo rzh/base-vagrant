@@ -9,6 +9,6 @@ Host:
 </pre>
 - client: test client for GSSAPI. Execution following command to login with GSSAPI
 <pre>
-mongo --host=rhel64 --authenticationMechanism=GSSAPI --authenticationDatabase='$external' --username gssapitest@MONGOTEST.COM
+./mongodb/bin/mongo --host=rhel64 --authenticationMechanism=GSSAPI --authenticationDatabase='$external' --username gssapitest@MONGOTEST.COM
 </pre>
 
