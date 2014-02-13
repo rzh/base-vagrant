@@ -60,13 +60,20 @@ aaaAAA111
 aaaAAA111
 !
 
-echo "create principle for mongod_rh64 mongodb"
-kadmin.local -q "addprinc mongodb/rhel64.mongotest.com" <<!
+function addMongod {
+	echo "create principle for mongod_$1 mongodb"
+	kadmin.local -q "addprinc mongodb/$1.mongotest.com" <<!
 aaaAAA111
 aaaAAA111
 !
 
-echo "create keytab for mongod rhel64"
-kadmin.local -q "ktadd -k mongod_rhel64.keytab mongodb/rhel64.mongotest.com"
-mv mongod_rhel64.keytab  /vagrant/shared
-chown vagrant:vagrant /vagrant/shared/mongod_rhel64.keytab
+	echo "create keytab for mongod $1"
+	kadmin.local -q "ktadd -k mongod_$1.keytab mongodb/$1.mongotest.com"
+}
+
+addMongod rhel64
+addMongod rhel59
+addMongod ubuntu1204
+
+mv *.keytab  /vagrant/shared
+chown vagrant:vagrant /vagrant/shared/*.keytab

@@ -10,22 +10,28 @@ source $DIR/config.sh
 echo "execute common installation tasks"
 bash $DIR/install_kerberos_common.sh
 
-if [ -f /etc/redhat-release ]
-then
-	echo "install krb5 packages"
-	yum install krb5-libs krb5-workstation -y
-fi
-
 echo "install mongod enterprise needed package"
 if [ -f /etc/redhat-release ]; then
+	echo "install krb5 packages"
+	yum install krb5-libs krb5-workstation -y
+
+	echo "install enterprise needed module"
 	sudo yum install openssl net-snmp net-snmp-libs net-snmp-utils cyrus-sasl cyrus-sasl-lib cyrus-sasl-devel cyrus-sasl-gssapi cyrus-sasl-md5 -y
+elif [ -f /etc/lsb-release ]; then
+	# ubuntu
+
+	# apt-get install krb5-user  -y 
+	apt-get install libssl0.9.8 snmp snmpd cyrus-sasl2-dbg cyrus-sasl2-mit-dbg libsasl2-2 libsasl2-dev libsasl2-modules libsasl2-modules-gssapi-mit -y
 fi
 
 
-echo "update krb5.conf"
-sed -i 's/EXAMPLE/MONGOTEST/g' /etc/krb5.conf
-sed -i 's/example/mongotest/g' /etc/krb5.conf
-sed -i 's/kerberos.mongotest.com/kdc.mongotest.com/g' /etc/krb5.conf
+# echo "update krb5.conf"
+# sed -i 's/EXAMPLE/MONGOTEST/g' /etc/krb5.conf
+# sed -i 's/example/mongotest/g' /etc/krb5.conf
+# sed -i 's/kerberos.mongotest.com/kdc.mongotest.com/g' /etc/krb5.conf
+
+echo "copy krb5.conf"
+cp /vagrant/shared/krb5.conf /etc
 
 echo "dbpath=/home/vagrant/dbs" >> /home/vagrant/mongod.conf
 echo "auth = true"  >> /home/vagrant/mongod.conf
@@ -48,12 +54,20 @@ if [ -f /etc/redhat-release ]; then
 		rm mongodb-linux-x86_64-enterprise-rhel62-latest.tgz
 		mv mongodb-linux-x86_64-enterprise-rhel62-* mongodb
 	elif grep -q "release 5.. (Final)" /etc/redhat-release
+	then
 		# redhat 5.x release
 		wget http://downloads.mongodb.com/linux/mongodb-linux-x86_64-enterprise-rhel57-latest.tgz
 		tar zxvf mongodb-linux-x86_64-enterprise-rhel57-latest.tgz
 		rm mongodb-linux-x86_64-enterprise-rhel57-latest.tgz
 		mv mongodb-linux-x86_64-enterprise-rhel57-* mongodb
 	fi
+elif [ -f /etc/lsb-release ] 
+then
+	# ubuntu
+	wget http://downloads.mongodb.com/linux/mongodb-linux-x86_64-enterprise-ubuntu1204-latest.tgz
+	tar zxvf mongodb-linux-x86_64-enterprise-ubuntu1204-latest.tgz
+	rm mongodb-linux-x86_64-enterprise-ubuntu1204-latest.tgz
+	mv mongodb-linux-x86_64-enterprise-ubuntu1204-* mongodb
 fi
 
 echo "restore dbs"
