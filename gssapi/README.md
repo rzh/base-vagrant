@@ -3,6 +3,7 @@ This is the GSSAPI/Kerberos test environment.
 
 Host:
 - kdc: KDC for Kerberos
+- ubunto1204: Ubuntu 12.04 LTS VM
 - rhel64: CentOS 6.4 MongoD host, start mongod with GSSAPI by executing
 <pre>
 ./mongodb/bin/mongod --config=mongod.conf
