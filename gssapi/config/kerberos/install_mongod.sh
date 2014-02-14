@@ -12,6 +12,12 @@ bash $DIR/install_kerberos_common.sh
 
 echo "install mongod enterprise needed package"
 if [ -f /etc/redhat-release ]; then
+	if grep -q "CentOS release 5." /etc/redhat-release; then
+		# redhat 5.x need configure /etc/resolvr.conf to get DNS working
+		echo "nameserver 10.0.2.3" > /etc/resolv.conf
+		chmod -w /etc/resolv.conf
+	fi
+
 	echo "install krb5 packages"
 	yum install krb5-libs krb5-workstation -y
 
@@ -22,6 +28,14 @@ elif [ -f /etc/lsb-release ]; then
 
 	# apt-get install krb5-user  -y 
 	apt-get install libssl0.9.8 snmp snmpd cyrus-sasl2-dbg cyrus-sasl2-mit-dbg libsasl2-2 libsasl2-dev libsasl2-modules libsasl2-modules-gssapi-mit -y
+elif [ -f /etc/SuSE-release ]; then
+	# Suse
+	sudo rpm -i /vagrant/shared/suse/snmp-mibs-5.4.2.1-8.1.x86_64.rpm
+	sudo rpm -i /vagrant/shared/suse/libsensors3-2.10.6-10.15.x86_64.rpm
+	sudo rpm -i /vagrant/shared/suse/libsnmp15-5.4.2.1-8.1.x86_64.rpm
+	sudo rpm -U /vagrant/shared/suse/libopenssl0_9_8-0.9.8j-0.44.1.x86_64.rpm
+	sudo rpm -i /vagrant/shared/suse/libopenssl0_9_8-hmac-0.9.8j-0.44.1.x86_64.rpm
+	sudo rpm -U /vagrant/shared/suse/openssl-0.9.8j-0.44.1.x86_64.rpm
 fi
 
 
@@ -68,6 +82,12 @@ then
 	tar zxvf mongodb-linux-x86_64-enterprise-ubuntu1204-latest.tgz
 	rm mongodb-linux-x86_64-enterprise-ubuntu1204-latest.tgz
 	mv mongodb-linux-x86_64-enterprise-ubuntu1204-* mongodb
+elif [ -f /etc/SuSE-release ]; then
+	# Suse
+	wget http://downloads.mongodb.com/linux/mongodb-linux-x86_64-enterprise-suse11-latest.tgz
+	tar zxvf mongodb-linux-x86_64-enterprise-suse11-latest.tgz
+	rm mongodb-linux-x86_64-enterprise-suse11-latest.tgz
+	mv mongodb-linux-x86_64-enterprise-suse11-* mongodb
 fi
 
 echo "restore dbs"
@@ -83,5 +103,10 @@ if [ -f /home/vagrant/*.tgz ]; then
 	rm /home/vagrant/*.tgz
 fi
 
-chown -R vagrant:vagrant /home/vagrant/*
+if [ -f /etc/SuSE-release ]; then
+	# Suse
+	chown -R vagrant:users /home/vagrant/*
+else
+	chown -R vagrant:vagrant /home/vagrant/*
+fi
 

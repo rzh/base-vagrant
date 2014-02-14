@@ -74,6 +74,7 @@ aaaAAA111
 addMongod rhel64
 addMongod rhel59
 addMongod ubuntu1204
+addMongod suse11sp1
 
 mv *.keytab  /vagrant/shared
 chown vagrant:vagrant /vagrant/shared/*.keytab

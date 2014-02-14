@@ -51,8 +51,8 @@ Vagrant.configure("2") do |config|
   end  
 
   config.vm.define :rhel59 do |mongod|
-    mongod.vm.box = "CentoOS 5.8"
-    # mongod.vm.box_url = "http://puppet-vagrant-boxes.puppetlabs.com/centos-59-x64-vbox4210-nocm.box"
+    mongod.vm.box = "CentoOS 5.9"
+    mongod.vm.box_url = "http://puppet-vagrant-boxes.puppetlabs.com/centos-59-x64-vbox4210-nocm.box"
 
     mongod.vm.provider "virtualbox" do |v|
        v.customize ["modifyvm", :id, "--cpus", "2"]
@@ -62,7 +62,6 @@ Vagrant.configure("2") do |config|
     mongod.vm.hostname = "rhel59.mongotest.com"
     mongod.vm.provision :shell, :inline => $MONGOD_SCRIPT
   end  
-
 
   config.vm.define :ubuntu1204 do |mongod|
     # pick my own version here
@@ -77,6 +76,35 @@ Vagrant.configure("2") do |config|
     mongod.vm.hostname = "ubuntu1204.mongotest.com"
     mongod.vm.provision :shell, :inline => $MONGOD_SCRIPT
   end
+
+  config.vm.define :suse11sp1 do |mongod|
+    # pick my own version here
+    mongod.vm.box = "Suse ES 11sp1"
+    mongod.vm.box_url = "http://puppet-vagrant-boxes.puppetlabs.com/sles-11sp1-x64-vbox4210-nocm.box"
+
+    mongod.vm.provider "virtualbox" do |v|
+       # v.customize ["modifyvm", :id, "--cpus", "2"]
+    end
+
+    mongod.vm.network :private_network, ip: "192.168.19.104"
+    mongod.vm.hostname = "suse11sp1.mongotest.com"
+    mongod.vm.provision :shell, :inline => $MONGOD_SCRIPT
+  end
+
+  config.vm.define :suse1201 do |mongod|
+    # pick my own version here
+    mongod.vm.box = "Suse 12.1"
+    mongod.vm.box_url = "https://s3.amazonaws.com/circlejtp/OpenSuseVagrant/OpenSuse12_1x64_July14.box"
+
+    mongod.vm.provider "virtualbox" do |v|
+       # v.customize ["modifyvm", :id, "--cpus", "2"]
+    end
+
+    mongod.vm.network :private_network, ip: "192.168.19.105"
+    mongod.vm.hostname = "suse1201.mongotest.com"
+    mongod.vm.provision :shell, :inline => $MONGOD_SCRIPT
+  end
+
 
   config.vm.define :client do |mongod|
     mongod.vm.box = "CentoOS 6.4"
